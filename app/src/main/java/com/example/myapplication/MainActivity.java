@@ -1,7 +1,13 @@
 package com.example.myapplication;
 
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.widget.TextView;
+import android.graphics.RenderEffect;
+import android.graphics.Shader;
+import android.os.Build;
+import android.view.View;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
