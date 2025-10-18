@@ -1,4 +1,4 @@
-# 🔐 Firebase Authentication App (Java + Android)
+# 🔐 Simple Android Login Using Firebase Realtime Database (Java + Android)
 
 A simple, elegant Android app built using **Java** and **Firebase Realtime Database** for user authentication.  
 It includes **Signup**, **Login**, and **Password Reset** screens — all with a modern UI design and CardView layouts.
