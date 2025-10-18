@@ -44,7 +44,9 @@
                 android:hint="Name"
                 android:drawableLeft="@drawable/baseline_person_24"
                 android:drawablePadding="8dp"
-                android:textColor="@color/white"/>
+                android:textColorHint="#80FFFFFF"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/white"/>
 
             <EditText
                 android:layout_width="match_parent"
@@ -55,7 +57,9 @@
                 android:hint="Email"
                 android:drawableLeft="@drawable/baseline_email_24"
                 android:drawablePadding="8dp"
-                android:textColor="@color/white"/>
+                android:textColorHint="#80FFFFFF"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/white"/>
 
             <EditText
                 android:layout_width="match_parent"
@@ -66,8 +70,10 @@
                 android:hint="Password"
                 android:drawableLeft="@drawable/baseline_lock_24"
                 android:drawablePadding="8dp"
-                android:textColor="@color/white"
                 android:inputType="textPassword"
+                android:textColorHint="#80FFFFFF"
+                android:textColor="@color/white"
+                android:backgroundTint="@color/white"
                 />
             
             <Button

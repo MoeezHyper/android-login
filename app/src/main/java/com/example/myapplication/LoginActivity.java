@@ -23,7 +23,7 @@ public class LoginActivity extends AppCompatActivity {
 
     EditText loginEmail, loginPassword;
     Button loginButton;
-    TextView signupRedirectText;
+    TextView signupRedirectText, forgotRedirectText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,6 +36,7 @@ public class LoginActivity extends AppCompatActivity {
         loginPassword = findViewById(R.id.login_password);
         loginButton = findViewById(R.id.login_button);
         signupRedirectText = findViewById(R.id.signupRedirectText);
+        forgotRedirectText = findViewById(R.id.forgotRedirectText);
 
         // 🔹 Login button click
         loginButton.setOnClickListener(v -> {
@@ -46,6 +47,10 @@ public class LoginActivity extends AppCompatActivity {
         // 🔹 Redirect to signup
         signupRedirectText.setOnClickListener(v -> {
             startActivity(new Intent(LoginActivity.this, SignupActivity.class));
+        });
+
+        forgotRedirectText.setOnClickListener(v -> {
+            startActivity(new Intent(LoginActivity.this, ForgetPasswordActivity.class));
         });
     }
 
