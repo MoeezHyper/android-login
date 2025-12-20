@@ -14,25 +14,51 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    private RecyclerView recyclerView;
+    private TextView errorText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
-        TextView textView = findViewById(R.id.hello_text);
+        recyclerView = findViewById(R.id.recyclerView);
+        errorText = findViewById(R.id.errorText);
 
-        // get the name from Intent
-        String name = getIntent().getStringExtra("name");
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        // show Hello message
-        if (name != null) {
-            textView.setText("Welcome to your dashboard " + name + "!");
-        } else {
-            textView.setText("Hello User!");
-        }
+        fetchProducts();
     }
+
+    private void fetchProducts() {
+
+        new Thread(() -> {
+
+            List<Product> products = ApiClient.fetchProducts();
+
+            runOnUiThread(() -> {
+
+                if (products == null) {
+                    errorText.setText("Network error. Loading offline data.");
+                    errorText.setVisibility(View.VISIBLE);
+                }
+                else if (products.isEmpty()) {
+                    errorText.setText("No products available.");
+                    errorText.setVisibility(View.VISIBLE);
+                }
+                else {
+                    errorText.setVisibility(View.GONE);
+                    recyclerView.setAdapter(new ProductAdapter(products));
+                }
+            });
+        }).start();
+    }
+
 }
