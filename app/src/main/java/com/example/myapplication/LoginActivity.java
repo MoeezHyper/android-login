@@ -29,11 +29,23 @@ public class LoginActivity extends AppCompatActivity {
     TextView signupRedirectText, forgotRedirectText;
     private static final String PREFS_NAME = "ThemePrefs";
     private static final String THEME_KEY = "theme";
+    private static final String LOGIN_PREFS_NAME = "LoginPrefs";
+    private static final String IS_LOGGED_IN_KEY = "isLoggedIn";
+    private static final String EMAIL_KEY = "email";
+    private static final String NAME_KEY = "name";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         applyTheme();
+
+        // Check if the user is already logged in
+        if (isLoggedIn()) {
+            launchMainActivity();
+            return;
+        }
+
         setContentView(R.layout.activity_login);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -144,13 +156,9 @@ public class LoginActivity extends AppCompatActivity {
                         String nameFromDB = userSnapshot.child("name").getValue(String.class);
 
                         if (passwordFromDB != null && passwordFromDB.equals(userPassword)) {
+                            saveLoginState(userEmail, nameFromDB);
                             Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
-
-                            Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-                            intent.putExtra("email", userEmail);
-                            intent.putExtra("name", nameFromDB);
-                            startActivity(intent);
-                            finish();
+                            launchMainActivity();
                             return;
                         } else {
                             loginPassword.setError("Invalid password");
@@ -169,5 +177,27 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this, "Database error: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private void saveLoginState(String email, String name) {
+        SharedPreferences.Editor editor = getSharedPreferences(LOGIN_PREFS_NAME, MODE_PRIVATE).edit();
+        editor.putBoolean(IS_LOGGED_IN_KEY, true);
+        editor.putString(EMAIL_KEY, email);
+        editor.putString(NAME_KEY, name);
+        editor.apply();
+    }
+
+    private boolean isLoggedIn() {
+        SharedPreferences prefs = getSharedPreferences(LOGIN_PREFS_NAME, MODE_PRIVATE);
+        return prefs.getBoolean(IS_LOGGED_IN_KEY, false);
+    }
+
+    private void launchMainActivity() {
+        Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+        SharedPreferences prefs = getSharedPreferences(LOGIN_PREFS_NAME, MODE_PRIVATE);
+        intent.putExtra(EMAIL_KEY, prefs.getString(EMAIL_KEY, ""));
+        intent.putExtra(NAME_KEY, prefs.getString(NAME_KEY, ""));
+        startActivity(intent);
+        finish();
     }
 }
