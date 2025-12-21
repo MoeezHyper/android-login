@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -12,10 +13,10 @@ import android.widget.TextView;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.myapplication.dao.ProductDao;
 import com.example.myapplication.model.Product;
 import com.google.android.material.snackbar.Snackbar;
 
@@ -25,12 +26,14 @@ public class MainActivity extends AppCompatActivity implements ProductAdapter.On
 
     private RecyclerView recyclerView;
     private TextView errorText;
-    private ProductDao productDao;
     private ProductAdapter adapter;
+    private ProductViewModel productViewModel;
     private static final String PREFS_NAME = "ThemePrefs";
     private static final String THEME_KEY = "theme";
     private static final String LOGIN_PREFS_NAME = "LoginPrefs";
     private static final String IS_LOGGED_IN_KEY = "isLoggedIn";
+    private static final String RECYCLER_VIEW_STATE = "recycler_view_state";
+    private Parcelable recyclerViewState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +51,55 @@ public class MainActivity extends AppCompatActivity implements ProductAdapter.On
         errorText = findViewById(R.id.errorText);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        productDao = new ProductDao(this);
+        if (savedInstanceState != null) {
+            recyclerViewState = savedInstanceState.getParcelable(RECYCLER_VIEW_STATE);
+        }
 
-        fetchProducts();
+        productViewModel = new ViewModelProvider(this).get(ProductViewModel.class);
+
+        productViewModel.getProducts().observe(this, products -> {
+            if (products != null && !products.isEmpty()) {
+                errorText.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                adapter = new ProductAdapter(products);
+                adapter.setOnItemClickListener(this);
+                recyclerView.setAdapter(adapter);
+                if (recyclerViewState != null) {
+                    recyclerView.getLayoutManager().onRestoreInstanceState(recyclerViewState);
+                    recyclerViewState = null;
+                }
+            } else {
+                errorText.setText("No products available.");
+                errorText.setTextColor(Color.BLACK);
+                errorText.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+            }
+        });
+
+        productViewModel.getError().observe(this, error -> {
+            if (error != null) {
+                if (error.startsWith("Network error")) {
+                    Snackbar snackbar = Snackbar.make(recyclerView, error, Snackbar.LENGTH_LONG);
+                    View snackbarView = snackbar.getView();
+                    TextView textView = snackbarView.findViewById(com.google.android.material.R.id.snackbar_text);
+                    textView.setTextColor(Color.RED);
+                    snackbar.show();
+                } else {
+                    errorText.setText(error);
+                    errorText.setTextColor(Color.RED);
+                    errorText.setVisibility(View.VISIBLE);
+                    recyclerView.setVisibility(View.GONE);
+                }
+            }
+        });
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (recyclerView != null && recyclerView.getLayoutManager() != null) {
+            outState.putParcelable(RECYCLER_VIEW_STATE, recyclerView.getLayoutManager().onSaveInstanceState());
+        }
     }
 
     @Override
@@ -105,61 +154,6 @@ public class MainActivity extends AppCompatActivity implements ProductAdapter.On
         Intent intent = new Intent(MainActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
-    }
-
-    private void fetchProducts() {
-        new Thread(() -> {
-            List<Product> products = ApiClient.fetchProducts();
-
-            runOnUiThread(() -> {
-                if (products != null) { // ONLINE
-                    // Persist new data
-                    productDao.open();
-                    productDao.deleteAllProducts();
-                    for (Product product : products) {
-                        productDao.addProduct(product);
-                    }
-                    productDao.close();
-
-                    if (products.isEmpty()) {
-                        errorText.setText("No products available.");
-                        errorText.setTextColor(Color.BLACK);
-                        errorText.setVisibility(View.VISIBLE);
-                        recyclerView.setVisibility(View.GONE);
-                    } else {
-                        errorText.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.VISIBLE);
-                        adapter = new ProductAdapter(products);
-                        adapter.setOnItemClickListener(this);
-                        recyclerView.setAdapter(adapter);
-                    }
-
-                } else { // OFFLINE
-                    Snackbar snackbar = Snackbar.make(recyclerView, "Network error. Loading offline data.", Snackbar.LENGTH_LONG);
-                    View snackbarView = snackbar.getView();
-                    TextView textView = snackbarView.findViewById(com.google.android.material.R.id.snackbar_text);
-                    textView.setTextColor(Color.RED);
-                    snackbar.show();
-
-                    productDao.open();
-                    List<Product> offlineProducts = productDao.getAllProducts();
-                    productDao.close();
-
-                    if (offlineProducts.isEmpty()) {
-                        errorText.setText("No products available offline. Please check your network connection.");
-                        errorText.setTextColor(Color.RED);
-                        errorText.setVisibility(View.VISIBLE);
-                        recyclerView.setVisibility(View.GONE);
-                    } else {
-                        errorText.setVisibility(View.GONE);
-                        recyclerView.setVisibility(View.VISIBLE);
-                        adapter = new ProductAdapter(offlineProducts);
-                        adapter.setOnItemClickListener(this);
-                        recyclerView.setAdapter(adapter);
-                    }
-                }
-            });
-        }).start();
     }
 
     @Override
