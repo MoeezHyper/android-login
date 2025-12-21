@@ -59,7 +59,7 @@ This project is organized into distinct sections, each implementing a core aspec
 
 ---
 
-## 🧩 Tech Stack
+## Tech Stack
 
 | 	Component 	  |      Description	     |
 |-------------------------|--------------------------|
