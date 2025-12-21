@@ -1,9 +1,11 @@
 package com.example.myapplication;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -36,6 +38,7 @@ public class ProductDetailActivity extends AppCompatActivity {
         TextView productDescription = findViewById(R.id.productDescription);
         TextView productPrice = findViewById(R.id.productPrice);
         TextView productRating = findViewById(R.id.productRating);
+        Button viewOnWebsiteButton = findViewById(R.id.viewOnWebsiteButton);
 
         if (product != null) {
             Glide.with(this).load(product.getImage()).into(productImage);
@@ -44,6 +47,12 @@ public class ProductDetailActivity extends AppCompatActivity {
             productDescription.setText(product.getDescription());
             productPrice.setText(String.format(Locale.getDefault(), "$%.2f", product.getPrice()));
             productRating.setText(String.format(Locale.getDefault(), "Rating: %.2f (%d)", product.getRate(), product.getCount()));
+
+            viewOnWebsiteButton.setOnClickListener(v -> {
+                Intent intent = new Intent(ProductDetailActivity.this, WebViewActivity.class);
+                intent.putExtra("url", "https://fakestoreapi.com/products/" + product.getId());
+                startActivity(intent);
+            });
         }
     }
 

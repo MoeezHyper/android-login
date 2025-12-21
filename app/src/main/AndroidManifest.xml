@@ -29,7 +29,7 @@
         </activity>
         <activity
             android:name=".SignupActivity"
-            android.exported="false" />
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -39,6 +39,9 @@
         </activity>
         <activity
             android:name=".ProductDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".WebViewActivity"
             android:exported="false" />
     </application>
 
