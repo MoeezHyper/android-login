@@ -1,5 +1,7 @@
 package com.example.myapplication;
 
+import com.example.myapplication.model.Product;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -46,12 +48,15 @@ public class ApiClient {
                 for (int i = 0; i < array.length(); i++) {
                     JSONObject obj = array.getJSONObject(i);
 
-                    Product product = new Product(
-                            obj.getInt("id"),
-                            obj.getString("title"),
-                            obj.getString("description"),
-                            obj.getInt("price")
-                    );
+                    Product product = new Product();
+                    product.setId(obj.getInt("id"));
+                    product.setTitle(obj.getString("title"));
+                    product.setPrice(obj.getDouble("price"));
+                    product.setDescription(obj.getString("description"));
+                    product.setCategory(obj.getString("category"));
+                    product.setImage(obj.getString("thumbnail"));
+                    product.setRate(obj.getDouble("rating"));
+                    product.setCount(obj.getInt("stock"));
 
                     products.add(product);
                 }
