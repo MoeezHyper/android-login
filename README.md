@@ -1,4 +1,4 @@
-# 🔐 ConnectSphere: A Feature-Rich Android Application (Java + Android)
+# ConnectSphere: A Feature-Rich Android Application (Java + Android)
 
 ConnectSphere is a comprehensive and robust Android application built with Java. It demonstrates a full-stack approach to modern app development, integrating everything from dynamic theming and secure authentication to offline data persistence and web service integration.
 
@@ -6,7 +6,7 @@ Originally a simple login system, this project has been expanded into a powerful
 
 ---
 
-## 🚀 Key Features & Technical Highlights
+## Key Features & Technical Highlights
 This project is organized into distinct sections, each implementing a core aspect of modern Android development.
 
  **Section 1: Dynamic Theme Management**
