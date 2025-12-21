@@ -10,16 +10,26 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.myapplication.model.Product;
 
 import java.util.List;
+import java.util.Locale;
 
 public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHolder> {
 
     private List<Product> products;
+    private OnItemClickListener listener;
+
+    public interface OnItemClickListener {
+        void onItemClick(Product product);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
 
     public ProductAdapter(List<Product> products) {
         this.products = products;
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView title, description, price;
 
         public ViewHolder(View view) {
@@ -27,6 +37,13 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
             title = view.findViewById(R.id.productTitle);
             description = view.findViewById(R.id.productDescription);
             price = view.findViewById(R.id.productPrice);
+
+            view.setOnClickListener(v -> {
+                int position = getAdapterPosition();
+                if (listener != null && position != RecyclerView.NO_POSITION) {
+                    listener.onItemClick(products.get(position));
+                }
+            });
         }
     }
 
@@ -42,7 +59,7 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         Product p = products.get(position);
         holder.title.setText(p.getTitle());
         holder.description.setText(p.getDescription());
-        holder.price.setText("Price: $" + p.getPrice());
+        holder.price.setText(String.format(Locale.getDefault(), "$%.2f", p.getPrice()));
     }
 
     @Override

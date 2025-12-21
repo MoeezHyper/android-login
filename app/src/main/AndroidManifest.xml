@@ -29,9 +29,16 @@
         </activity>
         <activity
             android:name=".SignupActivity"
-            android:exported="false" />
+            android.exported="false" />
         <activity
             android:name=".MainActivity"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".ProductDetailActivity"
             android:exported="false" />
     </application>
 

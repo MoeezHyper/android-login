@@ -21,11 +21,12 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ProductAdapter.OnItemClickListener {
 
     private RecyclerView recyclerView;
     private TextView errorText;
     private ProductDao productDao;
+    private ProductAdapter adapter;
     private static final String PREFS_NAME = "ThemePrefs";
     private static final String THEME_KEY = "theme";
     private static final String LOGIN_PREFS_NAME = "LoginPrefs";
@@ -112,6 +113,7 @@ public class MainActivity extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 if (products != null) { // ONLINE
+                    // Persist new data
                     productDao.open();
                     productDao.deleteAllProducts();
                     for (Product product : products) {
@@ -127,8 +129,11 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         errorText.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.VISIBLE);
-                        recyclerView.setAdapter(new ProductAdapter(products));
+                        adapter = new ProductAdapter(products);
+                        adapter.setOnItemClickListener(this);
+                        recyclerView.setAdapter(adapter);
                     }
+
                 } else { // OFFLINE
                     Snackbar snackbar = Snackbar.make(recyclerView, "Network error. Loading offline data.", Snackbar.LENGTH_LONG);
                     View snackbarView = snackbar.getView();
@@ -148,10 +153,19 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         errorText.setVisibility(View.GONE);
                         recyclerView.setVisibility(View.VISIBLE);
-                        recyclerView.setAdapter(new ProductAdapter(offlineProducts));
+                        adapter = new ProductAdapter(offlineProducts);
+                        adapter.setOnItemClickListener(this);
+                        recyclerView.setAdapter(adapter);
                     }
                 }
             });
         }).start();
+    }
+
+    @Override
+    public void onItemClick(Product product) {
+        Intent intent = new Intent(this, ProductDetailActivity.class);
+        intent.putExtra("product", product);
+        startActivity(intent);
     }
 }
