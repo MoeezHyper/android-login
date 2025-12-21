@@ -7,7 +7,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String DATABASE_NAME = "products.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static final String TABLE_PRODUCTS = "products";
     public static final String COLUMN_ID = "id";
@@ -21,14 +21,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static final String TABLE_CREATE =
             "CREATE TABLE " + TABLE_PRODUCTS + " (" +
-                    COLUMN_ID + " INTEGER PRIMARY KEY, " +
+                    COLUMN_ID + " INTEGER NOT NULL, " +
                     COLUMN_TITLE + " TEXT, " +
                     COLUMN_PRICE + " REAL, " +
                     COLUMN_DESCRIPTION + " TEXT, " +
                     COLUMN_CATEGORY + " TEXT, " +
                     COLUMN_IMAGE + " TEXT, " +
                     COLUMN_RATE + " REAL, " +
-                    COLUMN_COUNT + " INTEGER" +
+                    COLUMN_COUNT + " INTEGER, " +
+                    "PRIMARY KEY(" + COLUMN_ID + ")" +
                     ");";
 
     public DatabaseHelper(Context context) {

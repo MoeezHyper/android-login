@@ -20,16 +20,25 @@ import java.util.Locale;
 
 public class ProductDetailActivity extends AppCompatActivity {
 
+    private Product product;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_detail);
 
-        Product product;
-        if (Build.VERSION.SDK_INT >= 33) {
-            product = getIntent().getParcelableExtra("product", Product.class);
+        if (savedInstanceState != null) {
+            if (Build.VERSION.SDK_INT >= 33) {
+                product = savedInstanceState.getParcelable("product", Product.class);
+            } else {
+                product = savedInstanceState.getParcelable("product");
+            }
         } else {
-            product = getIntent().getParcelableExtra("product");
+            if (Build.VERSION.SDK_INT >= 33) {
+                product = getIntent().getParcelableExtra("product", Product.class);
+            } else {
+                product = getIntent().getParcelableExtra("product");
+            }
         }
 
         ImageView productImage = findViewById(R.id.productImage);
@@ -49,11 +58,19 @@ public class ProductDetailActivity extends AppCompatActivity {
             productRating.setText(String.format(Locale.getDefault(), "Rating: %.2f (%d)", product.getRate(), product.getCount()));
 
             viewOnWebsiteButton.setOnClickListener(v -> {
+                String url = "https://dummyjson.com/products/" + product.getId();
+                Toast.makeText(this, "Loading URL: " + url, Toast.LENGTH_LONG).show();
                 Intent intent = new Intent(ProductDetailActivity.this, WebViewActivity.class);
-                intent.putExtra("url", "https://fakestoreapi.com/products/" + product.getId());
+                intent.putExtra("url", url);
                 startActivity(intent);
             });
         }
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable("product", product);
     }
 
     @Override
