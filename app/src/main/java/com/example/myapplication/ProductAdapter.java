@@ -1,9 +1,15 @@
 package com.example.myapplication;
 
+import android.view.ContextMenu;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.PopupMenu;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,14 +35,16 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
         this.products = products;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnCreateContextMenuListener {
         TextView title, description, price;
+        ImageButton optionsButton;
 
         public ViewHolder(View view) {
             super(view);
             title = view.findViewById(R.id.productTitle);
             description = view.findViewById(R.id.productDescription);
             price = view.findViewById(R.id.productPrice);
+            optionsButton = view.findViewById(R.id.optionsButton);
 
             view.setOnClickListener(v -> {
                 int position = getAdapterPosition();
@@ -44,7 +52,45 @@ public class ProductAdapter extends RecyclerView.Adapter<ProductAdapter.ViewHold
                     listener.onItemClick(products.get(position));
                 }
             });
+            view.setOnCreateContextMenuListener(this);
+
+            optionsButton.setOnClickListener(v -> {
+                PopupMenu popup = new PopupMenu(v.getContext(), v);
+                popup.getMenuInflater().inflate(R.menu.popup_menu, popup.getMenu());
+                popup.setOnMenuItemClickListener(item -> {
+                    int itemId = item.getItemId();
+                    if (itemId == R.id.action_add_to_cart) {
+                        Toast.makeText(v.getContext(), "Add to cart is not yet implemented", Toast.LENGTH_SHORT).show();
+                        return true;
+                    } else if (itemId == R.id.action_share) {
+                        Toast.makeText(v.getContext(), "Share is not yet implemented", Toast.LENGTH_SHORT).show();
+                        return true;
+                    }
+                    return false;
+                });
+                popup.show();
+            });
         }
+
+        @Override
+        public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+            MenuItem edit = menu.add(Menu.NONE, 1, 1, "Edit");
+            MenuItem delete = menu.add(Menu.NONE, 2, 2, "Delete");
+            edit.setOnMenuItemClickListener(onEditMenu);
+            delete.setOnMenuItemClickListener(onEditMenu);
+        }
+
+        private final MenuItem.OnMenuItemClickListener onEditMenu = item -> {
+            switch (item.getItemId()) {
+                case 1:
+                    Toast.makeText(itemView.getContext(), "Edit is not yet implemented", Toast.LENGTH_SHORT).show();
+                    break;
+                case 2:
+                    Toast.makeText(itemView.getContext(), "Delete is not yet implemented", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+            return true;
+        };
     }
 
     @Override

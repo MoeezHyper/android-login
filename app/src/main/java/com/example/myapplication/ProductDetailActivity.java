@@ -2,9 +2,13 @@ package com.example.myapplication;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -41,5 +45,24 @@ public class ProductDetailActivity extends AppCompatActivity {
             productPrice.setText(String.format(Locale.getDefault(), "$%.2f", product.getPrice()));
             productRating.setText(String.format(Locale.getDefault(), "Rating: %.2f (%d)", product.getRate(), product.getCount()));
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.options_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_change_theme) {
+            Toast.makeText(this, "Theme change is not yet implemented", Toast.LENGTH_SHORT).show();
+            return true;
+        } else if (id == R.id.action_logout) {
+            Toast.makeText(this, "Logout is not yet implemented", Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
